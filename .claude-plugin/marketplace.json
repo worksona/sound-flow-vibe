@@ -1,0 +1,20 @@
+{
+  "name": "sound-flow",
+  "owner": {
+    "name": "Atomic 47 Labs",
+    "url": "https://github.com/Atomic-47-Labs"
+  },
+  "metadata": {
+    "description": "Skills & tools for Sound Flow — nine browser audio studios sharing one library, one config codec and one substrate.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "sound-flow-vibe",
+      "source": "./sound-flow-vibe",
+      "description": "Vibe Sound Flow with words: pick the studio, author a seeded config against its schema, and deliver a #sfa= link that opens the studio with the sound already loaded — beats, synth patches, ambient beds, slicing, loops, narration, analysis, tape character, and full mixes.",
+      "version": "1.0.0",
+      "category": "creative"
+    }
+  ]
+}
