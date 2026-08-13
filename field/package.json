@@ -1,0 +1,15 @@
+{
+  "name": "field",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "FIELD — Sound Flow's mobile capture studio: sample, cut, play, loop, share. Speaks the CHOP/LOOM config law.",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview --host --port 4174"
+  },
+  "devDependencies": {
+    "vite": "^7.3.6"
+  }
+}

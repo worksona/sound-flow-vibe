@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#141210" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+  <title>FIELD — Sound Flow</title>
+</head>
+<body>
+  <div id="app">
+    <header id="topbar">
+      <span class="brand">FIELD</span>
+      <span class="brand-sub">sound flow · capture studio</span>
+      <span id="clock-state" class="chip" title="audio clock">clock: idle</span>
+    </header>
+    <main id="screens">
+      <section id="screen-capture" class="screen"></section>
+      <section id="screen-cut" class="screen" hidden></section>
+      <section id="screen-play" class="screen" hidden></section>
+      <section id="screen-share" class="screen" hidden></section>
+    </main>
+    <nav id="tabs">
+      <button data-tab="capture" class="tab active"><span class="tab-glyph">&#9210;</span>capture</button>
+      <button data-tab="cut" class="tab"><span class="tab-glyph">&#9986;</span>cut</button>
+      <button data-tab="play" class="tab"><span class="tab-glyph">&#9639;</span>play</button>
+      <button data-tab="share" class="tab"><span class="tab-glyph">&#8599;</span>share</button>
+    </nav>
+  </div>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
