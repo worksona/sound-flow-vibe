@@ -181,7 +181,7 @@ node scripts/bundle.mjs export demo30.sfa --name 'demo30-*' --configs
 node scripts/bundle.mjs import demo30.sfa            # on any other machine / substrate root
 ```
 
-Bridge-only deliveries (start it with `/sound-bridge`):
+Bridge-only deliveries (start it with `/sound-bridge` *(app repo)*):
 
 ```bash
 # m4a instead of wav
@@ -502,7 +502,7 @@ softens the fizz, vinyl lands on top, gain trims the result.
 - **A VOX timeline stem** — VOX assembles line · pause · gap · line into one asset, MIX places
   one clip, and the duck holds for the whole read. Use this when the pacing is the point and the
   bed should stay under the whole VO. Authoring a *new* script means rendering takes through the
-  bridge TTS first (`/sound-bridge start`, then VOX `⏺ All takes` or `POST /api/tts` per line);
+  bridge TTS first (`/sound-bridge start` *(app repo)*, then VOX `⏺ All takes` or `POST /api/tts` per line);
   refs to existing takes need no bridge at all:
 
 ```json

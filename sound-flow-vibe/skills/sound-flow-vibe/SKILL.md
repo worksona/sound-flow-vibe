@@ -99,7 +99,7 @@ cd <your Sound Flow checkout>
 ENV="$(cat cfg.json)" node -e "import('./src/lib/state.mjs').then(({Substrate})=>{const s=new Substrate();console.log(s.writeConfig(JSON.parse(process.env.ENV)))})"
 # → CFG-0007        (mixes: allocId('MIX') first, then writeConfig(env, {id}))
 ```
-Route every substrate write through `/sound-state` (INV-6). **Registering is what makes an asset
+Route every substrate write through `/sound-state` *(app repo)* (INV-6). **Registering is what makes an asset
 maintainable:** a render from a `CFG-`/`MIX-` id stamps `config: CFG-NNNN` on the sidecar, so
 `Substrate.stale()` sees it and the orchestrator re-renders it when the config changes. A render
 from a loose file carries **no** `config` field and is invisible to that machinery. One-off
@@ -150,7 +150,7 @@ re-encode, re-shortlink. If a stem changed, re-render the chain (see composing.m
 
 ## 3. WHEN THE BRIDGE IS NEEDED
 
-`scripts/bridge.mjs` on `localhost:3355` (start it with `/sound-bridge`). Everything else works
+`scripts/bridge.mjs` on `localhost:3355` (start it with `/sound-bridge` *(app repo)*). Everything else works
 without it. It is **required** for:
 
 | need | surface |
@@ -222,12 +222,12 @@ engines; the orchestrator runs it as step ⓪ and aborts the pass when it's red.
   `limit: -1` is safety, not loudness. Clipped renders fail `--check`.
 - **Remix input (RT-2 / RT-4).** If the user pastes a `#sfa=` URL, an a47l.com link, a bare code,
   raw JSON, or a `CFG-NNNN`/`MIX-NNNN` id — **decode/read it first**
-  (`encode.py --decode`, `/sound-state` for ids) and patch from their actual current state, never
+  (`encode.py --decode`, `/sound-state` *(app repo)* for ids) and patch from their actual current state, never
   from memory.
 - **Additive-only config changes.** Never change an engine's `defaults()`; never repurpose a field.
   New values and new optional keys only, so every existing config and share URL keeps rendering
   identically (§18 delta 1.7/1.8).
-- **All substrate writes route through `/sound-state`** (INV-6). No hand-written ids, sidecars,
+- **All substrate writes route through `/sound-state`** *(app repo)* (INV-6). No hand-written ids, sidecars,
   `state.json` edits, or activity-log appends.
 - **Publishing leaves the machine.** Shortlinking a delivery link is part of the job; posting to a
   blog, a repo, or anywhere public is the user's call (§13.3).
@@ -272,7 +272,6 @@ Honest limits. Say them out loud when they matter rather than bluffing.
 
 - Multi-studio composition: [`reference/composing.md`](reference/composing.md)
 - Per-studio vocabulary: `reference/schema-{pulse,circuit,drift,chop,loom,vox,prism,tape,mix,stomp}.md`
-- Sibling skills: `/sound-state` (all persistence) · `/sound-render` (headless renders) ·
-  `/sound-bridge` (serving + sync + TTS + m4a) · `/sound-orchestrator` (re-render the chain)
+- Sibling skills *(app repo — not shipped with this plugin)*: `/sound-state` (all persistence) · `/sound-render` (headless renders) · `/sound-bridge` (serving + sync + TTS + m4a) · `/sound-orchestrator` (re-render the chain)
 - Law: `SOUND-FLOW-SPEC.md` §5 (invariants), §8.2 (engine contract + buffer injection), §9 (RT
   loops), §10 (studios), §14 (testing oracle), §18 (deltas — 1.8 current).

@@ -69,8 +69,8 @@ Draft mode (browser `speechSynthesis`) is an audible sketch only: never captured
 take, never what renders — the studio marks it DRAFT everywhere.
 
 Agent path (RT-9): the same two POSTs work headlessly — `curl -X POST localhost:3355/api/tts
--d '{"text":"…"}' -H 'Content-Type: application/json' > take.wav`, then `sound-state` import
-or a bridge asset PUT, then `sound-render` the stem config.
+-d '{"text":"…"}' -H 'Content-Type: application/json' > take.wav`, then `sound-state` *(app repo)* import
+or a bridge asset PUT, then `sound-render` *(app repo)* the stem config.
 
 ## Deck export (INV-9)
 
