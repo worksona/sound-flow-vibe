@@ -17,9 +17,9 @@ Repo root everywhere below: `<your Sound Flow checkout>`.
                            │      ┌─ optional TAPE character pass on any stem
    PULSE  ──►  beat stem  ─┤      │  (aged / lo-fi / stretched / slowed)
                            ├──────┴───►  MIX  ──►  master
-   VOX    ──►  vo stem    ─┤              (tracks + clips + intents + master bus)
-   or corpus narration    ─┘
-                           ▲
+   VOX    ──►  vo stem    ─┤      │       (tracks + clips + intents + master bus)
+   or corpus narration    ─┘      └─ optional STOMP character pass on a *voice* stem
+                           ▲         (vocoder / pitch / ring / pedals)
    CIRCUIT / CHOP / LOOM / PRISM feed the same slot: any studio's render is
    just another named asset, and MIX places assets.
 ```
@@ -36,6 +36,7 @@ Which studio fills which slot:
 | melody / hook / bass | CIRCUIT | PULSE melodic lanes (`bass`/`pluck`/`keys`) |
 | voice | VOX | the imported corpus (`tag:narration`, `killer-0N/*`, `deck12/s*`, `launch/s*`) |
 | character / grit | TAPE | — (TAPE is a *pass over* a stem, never a source) |
+| voice character | STOMP | robot / vocoder / pitched / pedalled voice — also a *pass over* a stem, never a source. TAPE ages the tape, STOMP changes the speaker. |
 | the assembly | MIX | LOOM for a pure loop-station piece with no arrangement |
 
 ---

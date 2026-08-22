@@ -281,12 +281,22 @@ grabbable. Every gesture writes `cfg` through the studio's normal edit path
 | **slot ⠿ id drag** | reorder `cfg.slots` (drop indicator between rows). Order is organizational — every slot still tiles identically. |
 | **library strip → slot** | the collapsible **library** side strip lists every asset (name + duration, freshest-first). Drag an entry onto a slot row to set that slot's clip — always **hash-pinned** (`ref: "hash:<64-hex>"`), exactly like the picker. |
 | **library strip → empty rack space** | drop on the rack background (or the `+ slot` bar) to **append a new slot** with the dragged clip, hash-pinned. |
-| **drag on a slot's waveform thumbnail** | level/pan push/pull: **↕ = level** (0–1.5), **↔ = pan** (−1–1), both live with a floating readout chip (`lvl 1.10 · pan L0.3`). **Shift = fine**; **double-click resets** both to defaults. Values follow the minimal-config law — level 1 / pan 0 drop their keys. The row's sliders track the drag and stay as the secondary affordance. |
+| **drag on a slot's waveform thumbnail** | level/pan push/pull: **↕ = level** (0–1.5), **↔ = pan** (−1–1), both live with a floating readout chip (`lvl 1.10 · pan R0.30`). **Shift = fine**; **double-click resets** all three to defaults. Values follow the minimal-config law — level 1 / pan 0 / send 0 drop their keys. The row's sliders track the drag and stay as the secondary affordance (step 0.01, so a readout can always show exactly what the drag wrote). |
+| **⌥-drag on the thumbnail ↕** | **`send`** (0–1) — the third quantity on that thumbnail, slider-only before spec delta 1.14. The thumbnail now *draws* it: a column at its right edge, plus a pan tick along the bottom. |
+| **click a slot row** | **selects** it (the row outlines). Selection is what the arrow keys nudge. |
+| **← / →** | nudge the selected slot's `pan` by 0.05 (**shift = fine**, 0.01). |
+| **↑ / ↓** | nudge its `level`; **⌥↑ / ⌥↓** nudge its `send`. |
+| **[ / ]** | move the selected slot up/down the rack — reordering without a mouse. |
+| **esc** | deselect (then stop / cancel the take, as before). |
+| **drag the `space` widget in the bar** | the shared space bus is drawn as its own delay taps — spike spacing = `time`, decay = `feedback`, height = `mix`. That picture is the control: **↔ time**, **↕ feedback**, **⌥↕ mix**, shift = fine, **double-click resets the whole bus** (drops `cfg.space`). `time` was a typed-only seconds value before delta 1.14. |
 | **per-slot picker** | unchanged — the select still sets/clears refs. |
+| **the `time` field and the latency `nudge` box** | demoted to synced scrubbable readouts: a vertical drag scrubs them (shift = fine), typing still works. `bpm`, `bars`, `beats`, `loops` and `seed` stay plain typed fields — they are musical **constants**, not quantities with a home on screen. |
 
 Conventions (suite-wide): pointer capture, ≥ 12 px hit zones, cursor affordances
-(`grab` on grips and library entries, `move` on thumbnails), rAF-throttled feedback
-that idles when nothing moves.
+(`grab` on grips and library entries, `move` on thumbnails and the space widget),
+a floating chip with the live value during every drag, rAF-throttled feedback
+that idles when nothing moves. The status line clips with an ellipsis instead of
+wrapping the transport bar, so the rack never jumps under the pointer mid-drag.
 
 ### The arm panel — the step before the take (lib/mic.js, shared with CHOP + VOX)
 

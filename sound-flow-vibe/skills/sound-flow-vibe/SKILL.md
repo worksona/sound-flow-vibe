@@ -1,6 +1,6 @@
 ---
 name: sound-flow-vibe
-description: Author Sound Flow configs from natural language across all nine studios — PULSE (beats), CIRCUIT (synth patches/melodies), DRIFT (ambient beds), CHOP (slicing/pads), LOOM (loop layering), VOX (narration), PRISM (analysis/separation), TAPE (texture/lo-fi/stretch), MIX (arrangement/ducking/master) — and compose them into whole tracks. Given a described sound, pick the studio, read its schema, author a minimal seeded config, render or encode it into a shareable #sfa= URL, shortlink it on a47l.com, and hand back a clickable link plus the knobs to turn next. Trigger on /sound-flow-vibe, "make me a beat", "vibe a bed", "score this", "give me a patch", "chop this", "build me a track", "put a bed under this narration", or any request to generate, render, remix, or share a Sound Flow link, config, pattern, stem, or mix.
+description: Author Sound Flow configs from natural language across all ten studios — PULSE (beats), CIRCUIT (synth patches/melodies), DRIFT (ambient beds), CHOP (slicing/pads), LOOM (loop layering), VOX (narration), PRISM (analysis/separation), TAPE (texture/lo-fi/stretch), MIX (arrangement/ducking/master), STOMP (vocoder/pedalboard/live mic fx) — and compose them into whole tracks. Given a described sound, pick the studio, read its schema, author a minimal seeded config, render or encode it into a shareable #sfa= URL, shortlink it on a47l.com, and hand back a clickable link plus the knobs to turn next. Trigger on /sound-flow-vibe, "make me a beat", "vibe a bed", "score this", "give me a patch", "chop this", "build me a track", "put a bed under this narration", "make my voice a robot", or any request to generate, render, remix, or share a Sound Flow link, config, pattern, stem, or mix.
 ---
 
 ## Before you start — what you need
@@ -44,16 +44,24 @@ Nine studios, one config law, one substrate. Everything below is real and runnab
 | what tempo is this, onsets, split on silence, bar-chop, take the drums off, stems from a file | **PRISM** | `reference/schema-prism.md` |
 | lo-fi, aged, dusty, underwater, slowed, stretched, vinyl, "give it character" | **TAPE** | `reference/schema-tape.md` |
 | arrange, mix, duck the bed under the voice, master, "the whole thing together" | **MIX** | `reference/schema-mix.md` |
+| robot voice, vocoder, talkbox, Dalek, harmonizer, pitch a voice down, telephone, pedalboard, "put my voice through…", live mic fx | **STOMP** | `reference/schema-stomp.md` |
 
 **More than one of these in one sentence** ("score this demo", "build me a track", "beat with a
 bed and my narration over it") is the **composition flow** — read
 [`reference/composing.md`](reference/composing.md) and drive the chain from there.
 
-Engines today: pulse 1.1.0 · circuit 1.0.0 · drift 1.0.0 · chop 1.0.0 · loom 1.1.0 · vox 1.0.0 ·
-prism 1.1.0 · tape 1.1.0 · mix 1.2.1.
+Engines today: pulse 1.4.0 · circuit 1.1.0 · drift 1.1.0 · chop 1.0.0 · loom 1.1.0 · vox 1.0.0 ·
+prism 1.1.0 · tape 1.2.0 · mix 1.2.1 · stomp 1.0.0.
+
+**TAPE vs STOMP** — the two fx studios are split by what they can be fed, not by taste. TAPE's
+`rate`/`stretch`/`vinyl` are *source-stage*: they need a whole buffer, so TAPE ages a finished
+clip. STOMP is a *stream* processor with no source in it, which is why the same board runs on a
+microphone. The seven fx they share (`drive` `crush` `wobble` `lowpass` `highpass` `space` `gain`)
+are literally the same builders (`src/lib/fx-chain.mjs`) — same names, same params, same sound.
+Reach for TAPE to change what a clip *is*; reach for STOMP to change what a voice *sounds like*.
 
 **Pure-synthesis studios** (PULSE, CIRCUIT, DRIFT) reproduce from a URL alone — no audio travels.
-**Sample-based studios** (CHOP, LOOM, VOX, PRISM, TAPE, MIX) carry **clip refs**
+**Sample-based studios** (CHOP, LOOM, VOX, PRISM, TAPE, MIX, STOMP) carry **clip refs**
 (`hash:<64-hex>` · `name:<glob>` · `tag:<value>`) resolved by the host against the library
 (browser IndexedDB) or substrate (`sound-state/assets/`); the URL carries the *arrangement*, the
 audio rides in the library or a `.sfa` bundle.
@@ -243,9 +251,13 @@ Honest limits. Say them out loud when they matter rather than bluffing.
   ambient audio — MIX `conform` will happily play the clip at the wrong rate.
 - **HPSS is sustained-vs-transient, not instrument-aware.** It will not pull vocals out of a mix or
   split two pitched instruments. It pulls drums off a loop well; say that, not "stem separation".
-- **Mic takes need a human** (RT-8's last mile): LOOM `⏺`/`⏺ Overdub` and CHOP `⏺ Sample` are
-  `getUserMedia` paths with no agent equivalent. Claude can place, level, and process a human's
-  take, and can render everything else headlessly — it cannot perform one.
+- **Mic takes need a human** (RT-8's last mile): LOOM `⏺`/`⏺ Overdub`, CHOP `⏺ Sample` and
+  STOMP's **live** mode are `getUserMedia` paths with no agent equivalent. Claude can place, level,
+  and process a human's take, and can render everything else headlessly — it cannot perform one.
+- **STOMP live is a studio mode, not a config value.** `input.live` only tells the *studio* which
+  feed to wire into node zero; `input.ref` is required either way (`validate` refuses a config
+  without one). So every STOMP board renders headlessly against its clip — what Claude cannot do
+  is *be the microphone*. Author and verify on the clip, then hand the human the link to play live.
 - **Some paths need the environment, not the skill:** TTS needs the bridge *and* a working key;
   m4a and deck exports need the bridge *and* macOS `afconvert`; `drive.mjs` needs Playwright and a
   Chrome. Without them, report the gap — don't fake the artifact.
@@ -259,7 +271,7 @@ Honest limits. Say them out loud when they matter rather than bluffing.
 ## 7. REFERENCES
 
 - Multi-studio composition: [`reference/composing.md`](reference/composing.md)
-- Per-studio vocabulary: `reference/schema-{pulse,circuit,drift,chop,loom,vox,prism,tape,mix}.md`
+- Per-studio vocabulary: `reference/schema-{pulse,circuit,drift,chop,loom,vox,prism,tape,mix,stomp}.md`
 - Sibling skills: `/sound-state` (all persistence) · `/sound-render` (headless renders) ·
   `/sound-bridge` (serving + sync + TTS + m4a) · `/sound-orchestrator` (re-render the chain)
 - Law: `SOUND-FLOW-SPEC.md` §5 (invariants), §8.2 (engine contract + buffer injection), §9 (RT

@@ -182,14 +182,25 @@ estimate holding the slot.
 
 | gesture | effect |
 |---|---|
-| **drag the gap between two blocks** | push/pull the **leading line's `postSec`** (0–10 s, 2 decimals) — pacing under the pointer. The px→seconds scale is pinned at grab time, so the value changes by exactly the dragged amount. **Shift = fine**; a floating chip shows `post 0.45s` live; the numeric field re-syncs on release. |
-| **double-click a gap** | reset the leading line's `postSec` to the default (removes the key). |
-| **drag a block** | reorder the script — drop indicator shows the insertion point; on release `cfg.lines` is spliced to the new order, exactly as if the JSON were re-authored. |
-| **per-line pre/post numeric fields** | stay as the secondary affordance; `gapSec`/`tailSec` sliders redraw the strip live. |
+| **click a block (or its row)** | **selects** the line. Selection is the point: the row outlines, the block outlines, and the block grows explicit **⟨pre⟩ and ⟨post⟩ handles** — a persistent affordance, not a cursor you have to find by hovering. |
+| **drag the ⟨pre⟩ handle** | the grip sitting where the take starts sizes `preSec` (0–10 s, 2 decimals). Drag right = a longer pause before the line. |
+| **drag the ⟨post⟩ handle** | the grip on the block's right edge sizes `postSec` — the same field the gap drag writes, reachable on the **last** line too (which has no gap after it). |
+| **drag the gap between two blocks** | push/pull the **leading line's `postSec`** — pacing under the pointer. The px→seconds scale is pinned at grab time, so the value changes by exactly the dragged amount. |
+| **drag the tail grip** | the trailing silence is real screen space at the right end of the strip, shaded, with its own grip: dragging it left grows `tailSec`. Before delta 1.14 `tailSec` was reachable only through its slider. |
+| **double-click any handle or gap** | resets that span (removes the key). |
+| **drag a block** | reorder the script — drop indicator shows the insertion point; on release `cfg.lines` is spliced to the new order, exactly as if the JSON were re-authored. A clean click (no movement) selects instead. |
+| **← / →** | nudge the selected line's `postSec` by 0.05 s (**shift = fine**, 0.01 s). |
+| **↑ / ↓** | nudge the selected line's `preSec`, same steps. |
+| **[ / ]** | move the selected line up/down the script — reordering without a mouse. |
+| **esc** | deselect (and stop the stem). |
+| **per-line pre/post numeric fields** | **demoted to synced scrubbable readouts** (delta 1.14): a vertical drag on the field scrubs it (shift = fine), double-click resets it, and typing still works — a press without movement focuses the field as before. `gapSec`/`tailSec` sliders redraw the strip live. |
 
 Conventions (suite-wide): pointer capture, ≥ 12 px hit zones (narrow gaps widen to a
-12 px handle around their midpoint), cursor affordances (`ew-resize` over gaps,
-`grab` over blocks), rAF-throttled redraw that idles when nothing moves.
+12 px handle around their midpoint; handles take ±6 px), cursor affordances
+(`ew-resize` over gaps and handles, `grab` over blocks), a floating chip with the live
+value during every drag, rAF-throttled redraw that idles when nothing moves. The
+transport bar's status line clips with an ellipsis rather than wrapping, so the strip
+never jumps under the pointer mid-drag.
 
 ### Mic takes — your own voice, in the same slot
 

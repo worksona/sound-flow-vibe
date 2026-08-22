@@ -136,6 +136,34 @@ which is pure `toFixed(3)` rounding and does not accumulate).
 Slice-boundary lug drags on the waveform are a continuous seconds axis, so
 there **shift = fine** (10 % travel).
 
+**The slice envelope is drawn, and drawn things are grabbable** (spec delta 1.14).
+Selecting a slice paints its envelope along the bottom 28 px of the waveform — the
+attack ramp, a plateau at the slice's `gain`, the release ramp — over the slice's own
+region, so it reads against the audio it shapes. All three are dragged *there*:
+
+| gesture | effect |
+|---|---|
+| **drag the attack knee ↔** | `attack` (0 … half the slice length). **Shift = fine** (10 % travel); a chip shows `attack 0.031s` live. |
+| **drag the release knee ↔** | `release`, measured back from the slice end — dragging the knee left lengthens it. |
+| **drag the plateau ↕** | `gain` (0–1). The plateau's height *is* the gain, so the picture and the number cannot disagree. |
+| **double-click any of the three** | resets it (removes the key: `attack` → 0.003, `release` → 0.05, `gain` → 1). |
+| **← / →** with a slice selected | nudge `attack` by 0.005 s (**shift = fine**, 0.001 s). |
+| **↑ / ↓** with a slice selected | nudge `gain` by 0.05. |
+| **← / →** with a **delimiter** selected | move that boundary by 0.01 s (shift = 0.001 s) through `setSliceEdge` — the same shared-boundary clamping the lug drag uses. |
+| **← / →** with an **event** selected | move it in time by 0.01 s; **shift = SNAP** to the quantize grid (a gridded axis). |
+| **↑ / ↓** with an **event** selected | nudge its velocity `v` by 0.05. |
+
+The envelope band owns its 28 px: a knee stays grabbable where a delimiter line crosses
+it (the lug at the top is the delimiter's documented grab point, and it is untouched).
+
+**Every inspector number is a synced scrubbable readout, not the interface** (delta
+1.14). `start`, `end`, `pitch`, `attack`, `release` and an event's `t` all scrub on a
+vertical drag on the field itself (shift = fine; `pitch` steps in whole semitones —
+a gridded axis is always on its grid), double-click resets where a default exists, and
+typing is untouched: a press without movement focuses the field exactly as before.
+`choke` stays a plain typed field — it is a group **identifier**, not a quantity, and
+`grid-N` and the quantize `bpm` stay typed for the same reason (musical constants).
+
 **⏺ Capture arms the clock before it anchors** (spec delta 1.9). An `AudioContext`'s
 `currentTime` is *not* running when the constructor returns: the output device has to
 open first, and measured on macOS/Chrome against a real CoreAudio sink the clock sits

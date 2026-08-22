@@ -274,7 +274,13 @@ numeric fields stay as synced secondaries.
 |---|---|
 | **drag the waveform ↔** | slides the **bar grid**: writes `offset` (grab/grabbing cursor when a grid is drawn; a clean click < 4 px stays the segment audition). Shift = fine (offset is continuous seconds). |
 | **drag the silence threshold line ↕** | the `silenceDb` threshold is drawn at its waveform amplitude, mirrored top/bottom like a gate window (dashed, labelled). Dragging (ns-resize) maps the pointer back to dBFS, clamped to the schema range −90..−6 — 1 dB steps plain, **shift = fine 0.1 dB**. The `sil` numeric field syncs live, and the silence map recomputes through the normal analyze path, debounced ~150 ms during the drag (segment shading follows). Double-click the line resets to −38. |
+| **drag the gap gauge ↔** | `minGapSec` is drawn to scale as a red bracket along the bottom of the waveform — **as long as the shortest silence that counts**, on the same time axis as the audio, so you size it *against* the silences it is filtering rather than guessing a number. Its right end is the grip (ew-resize, ±6 px); shift = fine; double-click resets to 0.35. Typed-only before spec delta 1.14. |
+| **drag the render-bar seam ↔** | the slim bar under the waveform is the render's real length — the source block, then the **tail** block. Dragging the seam left grows `tailSec` (shift = fine, double-click = 0). `tailSec` had no picture at all before delta 1.14. |
 | **click a segment** | auditions it (translucent highlight). |
+| **← / →** | slide the bar grid: `offset` ± 0.01 s (**shift = fine**, 0.001 s). |
+| **↑ / ↓** | move the silence threshold: `silenceDb` ± 1 dB (shift = 0.1 dB). |
+| **⌥← / ⌥→** | nudge the gap gauge: `minGapSec` ± 0.05 s (shift = 0.01 s). |
+| **the `offset` / `tail` / `sil` / `gap` fields** | demoted to synced scrubbable readouts: a vertical drag on the field scrubs it (shift = fine), double-click resets it, typing is untouched. `bpm` (override) and `seed` stay plain typed fields — musical **constants**, not quantities with a home on screen. |
 
 ## The auto-conform story — PRISM tags bpm → MIX conforms
 

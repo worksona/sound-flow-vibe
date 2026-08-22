@@ -100,9 +100,9 @@ twin of what load-time resolution and the orchestrator's re-render chain do alre
 | `to` | number (bar) | > `at`, ≤ `bars`+1 | — | Region end (exclusive — `to:33` on a 32-bar song means "through bar 32"). Used by `loop` and `spread`; on a plain clip it truncates. |
 | `layout` | `"spread"` | — | — | Multi-match refs distributed **evenly between `at` and `to`** (default: song end): N matches → N slots of equal width, match k starts on slot k. Tails run naturally (uncapped). |
 | `loop` | bool | — | false | Tile the (trimmed) buffer from `at` until `to` or song end; last tile truncated. Per-tile fades double as seam click-guards. |
-| `gain` | number (dB) | −60–12 | 0 | Clip gain, pre-EQ. |
-| `fadeIn` / `fadeOut` | number (s) | ≥ 0 | 0.005 / 0.01 | Linear ramps at each placement's edges. |
-| `trimStart` / `trimEnd` | number (s) | ≥ 0 | 0 | Shave the buffer's head/tail before placement (buffer seconds, pre-conform). |
+| `gain` | number (dB) | −60–12 | 0 | Clip gain, pre-EQ. **Studio: ⌥-drag the block vertically, or `⌥←`/`⌥→`.** |
+| `fadeIn` / `fadeOut` | number (s) | ≥ 0 | 0.005 / 0.01 | Linear ramps at each placement's edges. **Studio: the two top-corner fade handles** (drawn as a wedge over the waveform). |
+| `trimStart` / `trimEnd` | number (s) | ≥ 0 | 0 | Shave the buffer's head/tail before placement (buffer seconds, pre-conform). **Studio: the two inner edges**; what was cut shows as a dimmed stub outside the block that drags back out. |
 | `conform` | bool | — | false | **Auto-conform (P4):** play the clip at `playbackRate = bpm / clipBpm`, where `clipBpm` is the resolved asset's `meta.bpm` (stamp it with PRISM **✎ write tags**). A 172 bpm break in an 86 bpm mix runs at rate 0.5 — twice the wall time; tile geometry and audio both scale, and loop/spread tiling uses the conformed length. Spread clips conform per match. Missing bpm on either side ⇒ the clip plays unconformed and the region is flagged `conformSkipped: true` (silent skip, never fatal). Vibe: *"drop in this break at our tempo"* → `conform: true`. |
 
 > ⚠️ **`conform` inherits any error in the clip's `meta.bpm` — and PRISM's confidence
@@ -288,19 +288,88 @@ set-numbers**: anything drawn that represents a parameter is grabbable. Every ge
 below writes the same config fields you author by hand (through the studio's normal
 update path), so drag-then-Copy-JSON round-trips. Conventions throughout: pointer
 capture, ≥ 12 px hit zones (handles: 6 px gold dots, 14 px hit), cursor affordances
-(grab / ns-resize / ew-resize / crosshair), live redraw while dragging, **⇧ = snap**
-(bar grid + 0.5 dB steps; free drag is fine at 0.1 dB), **double-click = remove/reset**
-per context, live dB readouts on every vertical pull. Numeric entry remains only for
-musical constants (bpm, bars, seed, beats/bar, from-bar).
+(grab / ns-resize / ew-resize / col-resize / nwse-resize / crosshair), live redraw while
+dragging, **double-click = remove/reset** per context, live dB/seconds readouts on every
+pull, and **persistent affordances** — a manipulable thing looks manipulable at rest, it
+does not wait for a hover.
+
+**⇧ polarity** follows spec §18 delta 1.8 and depends on the axis: on **gridded** axes
+(bars, steps, semitones) ⇧ = **SNAP** — the bar grid in an automation drag, the finer
+bar→beat grid step in a keyboard nudge; on **continuous** axes (dB, Hz, seconds,
+velocity) ⇧ = **FINE** — 0.5 → 0.1 dB, 10 → 1 ms. Numeric *entry* remains only for
+musical constants (bpm, bars, seed, beats/bar, from-bar) and for `ref`, which is a name
+rather than a quantity. Seconds and dB are **not** musical constants: fades, trims and
+every gain are drag-first, and the inspector's number fields are a precision readout
+behind the gesture, never the primary interface.
+
+### The clip block — zone split, handles, nudge
+
+A clip block is a **fully visual object**: nothing about a clip needs a typed number.
+The affordances are **persistent, not hover-only** — every resolved block carries a grip
+glyph (a 2×3 dot cluster at its left) at rest, and a **selected** block additionally
+shows both edge grips, the two inner trim ticks and the two fade corner handles. An
+unselected block reveals the same set on hover, and retracts it when the pointer leaves.
+A one-line hint under the timeline names every gesture.
+
+**Zone split** on a block `[x0…x1] × [y…y+h]`, evaluated in this order (first match wins):
+
+| # | zone | where | gesture → field |
+|---|---|---|---|
+| ① | **fade handles** | top **12 px**, within 9 px of the handle x (blocks ≥ 24 px wide) | horizontal drag → `fadeIn` / `fadeOut` (seconds) |
+| ② | **trim stubs** | the dimmed hatched ghosts **outside** the block (selected clip only) | horizontal drag → `trimStart` / `trimEnd`, pulling material back out |
+| ③ | **inner 8 px** | `[x0+8, x0+16)` and `(x1-16, x1-8]` (blocks ≥ 44 px wide) | horizontal drag → `trimStart` / `trimEnd` — shave the **source** |
+| ④ | **outer 8 px** | `[x0, x0+8)` / `(x1-8, x1]` (blocks ≥ 24 px wide) | drag → move the block's edge in **time**: left = `at` (holding `to`), right = `to` |
+| ⑤ | **body** | everything else | drag → move (`at`, bar snap; `to` rides along), ⌥+vertical → `gain` |
+
+The mnemonic: **outer 8 px moves an edge in TIME, inner 8 px shaves the SOURCE.** A clip
+that cannot be extended (no `to`, not `loop`/`spread`) has nothing for the outer right
+edge to do, so on those the outer right edge trims the tail instead. Narrow blocks
+(< 24 px) stay plain move targets — no zone is ever smaller than the pointer.
 
 - **Drag a clip block** horizontally → moves `at` (bar snap, clamped 1–`bars`; a clip
-  with `to` keeps its length — both ends shift). Live redraw while dragging.
+  with `to` keeps its length — both ends shift). Live bar readout while dragging.
 - **⌥ + vertical-drag a clip block** → **clip gain** (`clips[].gain`), 0.2 dB per px,
   clamped −60–12, live dB readout at the pointer; a gain landing on 0 leaves the config
   clean (field deleted).
-- **Drag a clip's right edge** (loop/spread clips, or any clip with `to`) → sets `to`,
-  bar-snapped; a loop-to-end clip picks up an explicit `to` on first resize.
+- **Drag a clip's outer right edge** (loop/spread clips, or any clip with `to`) → sets
+  `to`, bar-snapped; a loop-to-end clip picks up an explicit `to` on first resize.
+- **Drag a clip's outer left edge** → moves `at` while `to` stays put (the length
+  changes), clamped so `at` can never pass `to`.
+- **Fade handles** (top-left / top-right corners) ride the top edge at the end of each
+  slope, so the handle x *is* the fade length. Horizontal drag sets `fadeIn`/`fadeOut` in
+  seconds, clamped to the block's own duration; the ramp draws as a **wedge knocked out
+  of the block over the waveform**, so the fade is legible at a glance. Seconds are a
+  CONTINUOUS axis ⇒ free drag rounds to 10 ms, **⇧ = fine (1 ms)**. **Double-click a fade
+  handle resets it to 0** (written explicitly — `null`/absent still means the engine
+  defaults 0.005 / 0.01).
+- **Trim handles** are the inner edges — grabbing just *inside* the block shaves the
+  source. The trimmed-away material draws as a **dimmed hatched stub outside** the block,
+  which is itself draggable: pull the stub outward to restore what was cut. Drags land in
+  **buffer seconds** (the wall-clock pixel delta is divided back by the conform `rate`),
+  clamped to `0 … srcDur − otherTrim − 0.05`. Free drag rounds to 10 ms, **⇧ = fine
+  (1 ms)**. **Double-click a trim handle deletes the field.**
+  *These stubs show SOURCE extent, not timeline position:* MIX anchors a block at `at`,
+  so pulling the head trim back out lengthens the block **to the right**.
 - **Drag a clip onto another lane** → moves the clip between tracks (drop decides).
+
+**Keyboard nudge** (with a clip selected; the `input,select,textarea` guard means typing
+in a field never nudges):
+
+| keys | effect | axis rule |
+|---|---|---|
+| `←` / `→` | `at` ∓ **1 bar** | gridded |
+| `⇧←` / `⇧→` | `at` ∓ **1 beat** (`1/beatsPerBar` bar) | gridded ⇒ **⇧ = finer GRID STEP**, not a free value |
+| `⌥←` / `⌥→` | `gain` ∓ **1 dB** | continuous |
+| `⇧⌥←` / `⇧⌥→` | `gain` ∓ **0.1 dB** | continuous ⇒ **⇧ = FINE value** |
+| `↑` / `↓` | move the clip to the previous / next **track** | — |
+| `⌫` / `Del` | remove the clip | — |
+
+Note the **⇧ polarity split** — it is the suite law (spec §18 delta 1.8) read correctly,
+not an inconsistency: on a *gridded* axis (`at`, in bars) ⇧ means *snap finer*, so it
+subdivides bar → beat; on a *continuous* axis (`gain` in dB, fades and trims in seconds)
+⇧ means *fine value*. A clip carrying `to` keeps its length under every nudge (both ends
+ride). Everything clamps to the config's legal range: `at` to 1–`bars` (and further, so
+`at + length ≤ bars+1`), `gain` to −60–12; a gain landing on 0 deletes the field.
 - **Gain grip** — the slim strip on every lane's **left edge** is a push/pull track
   fader: absolute y ↦ dB (+12 at the band top … −24 at the bottom, the header slider's
   range), live readout, header slider syncs on release. The slider survives as the
@@ -331,9 +400,18 @@ musical constants (bpm, bars, seed, beats/bar, from-bar).
 - **↻ Take fresh** (toolbar) → re-resolves every ref against the Library now and
   reports which clips picked up a different hash (see the clip-refs section).
 - **⬇ Bundle** (toolbar) → one `.sfa` of the whole session (see the bundle section).
-- **Clip inspector** (click a clip): ref picker, at/to, loop, spread, **conform** toggle
+- **Clip inspector** (click a clip) — explicitly the **SECONDARY** surface: a readout &
+  precision panel behind the gestures above, labelled as such and styled quieter (dashed,
+  unfilled). It carries ref picker, at/to, loop, spread, **conform** toggle
   (`clips[].conform` — auto-conform to mix bpm via the asset's PRISM-tagged `meta.bpm`),
-  gain, fades, trims — the secondary, form-style affordance behind the gestures above.
+  gain, fades and trims, and stays **two-way synced**: canvas drags and keyboard nudges
+  refresh it live, typed entry lands in the config immediately.
+  Every numeric value additionally carries a **push/pull scrub readout** beside its input
+  (the same convention as tape.html): vertical drag, **4 px of travel per step**,
+  **⇧ = the fine step** (bar → beat on the gridded axes; 0.5 → 0.1 dB, 10 → 1 ms on the
+  continuous ones), **double-click = reset** — or *clear*, for the optional `to`. Only
+  `ref` stays a plain text input plus library picker: it is a **name, not a quantity**,
+  so there is nothing to push or pull.
 
 ### Live visualization (lib/viz.js kit)
 

@@ -14,6 +14,7 @@ import base64
 import json
 import sys
 import zlib
+from pathlib import Path
 
 DEFAULT_FILE_BASE = 'https://sound-flow.netlify.app/{studio}/'  # published default: the live studios
 LIVE_BASE = 'https://sound-flow.netlify.app/{studio}/'

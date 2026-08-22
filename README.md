@@ -6,7 +6,7 @@ loaded and playing.
 **Studios:** https://sound-flow.netlify.app · **Docs:** https://sound-flow.netlify.app/docs/
 
 ```
-/plugin marketplace add Atomic-47-Labs/sound-flow
+/plugin marketplace add worksona/sound-flow-vibe
 /plugin install sound-flow-vibe@sound-flow
 ```
 
@@ -17,7 +17,7 @@ Then just ask:
 > *"age this like it came off a worn cassette, with a bit of vinyl dust on top"*
 > *"sit the bed under the voice, and bring the beat in on bar five"*
 
-## The nine studios
+## The ten studios
 
 | studio | what it's for |
 |---|---|
@@ -30,6 +30,7 @@ Then just ask:
 | **PRISM** | analysis — bpm, onsets, silence splits, harmonic/percussive separation |
 | **TAPE** | texture — wobble, crush, filter sweeps, granular stretch, vinyl |
 | **MIX** | the hub — arrange stems, duck/ride/swell/tail intents, automation, master |
+| **STOMP** | pedalboard — a vocoder built from plain WebAudio nodes, plus pitch, ring mod and 25 stompbox presets in three banks. Pedals **compound**: stack several, bypass any one, or run the whole board live on your microphone |
 
 ## How it works
 
@@ -40,7 +41,7 @@ and the studio loads the sound.
 
 Configs are **seeded and deterministic**: the same config renders the same audio, so a URL
 *is* the piece. Generative studios (PULSE, CIRCUIT, DRIFT) travel completely in a link —
-no audio moves. Sample-based studios (CHOP, LOOM, VOX, PRISM, TAPE, MIX) carry *clip refs*
+no audio moves. Sample-based studios (CHOP, LOOM, VOX, PRISM, TAPE, MIX, STOMP) carry *clip refs*
 instead, so the link carries the arrangement while the audio lives in your browser library.
 
 ## What's in the box
@@ -56,10 +57,15 @@ commands are marked *(app repo)* in the skill.
 
 ## Honest limits
 
+STOMP's microphone is a *studio* mode, never a config value — `input.ref` always names a
+clip. So every pedalboard renders headlessly against its clip and a share link always opens
+with audio; what the skill cannot do is be the microphone. Author and verify on a clip, then
+play it live yourself.
+
 The skill can't hear. It verifies by analysis — durations, peak and RMS levels, onset
 counts, detected tempo — so it can tell you a mix isn't clipping and the beat landed where
 the math says. Whether it *grooves* is your call.
 
 ---
 
-Built by [Atomic 47 Labs](https://github.com/Atomic-47-Labs) · MIT
+Built by [Worksona](https://github.com/worksona) · MIT
