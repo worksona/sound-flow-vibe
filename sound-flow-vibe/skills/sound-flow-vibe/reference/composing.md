@@ -20,7 +20,7 @@ Repo root everywhere below: `<your Sound Flow checkout>`.
    VOX    ──►  vo stem    ─┤      │       (tracks + clips + intents + master bus)
    or corpus narration    ─┘      └─ optional STOMP character pass on a *voice* stem
                            ▲         (vocoder / pitch / ring / pedals)
-   CIRCUIT / CHOP / LOOM / PRISM feed the same slot: any studio's render is
+   CIRCUIT / LICK / CHOP / LOOM / PRISM feed the same slot: any studio's render is
    just another named asset, and MIX places assets.
 ```
 
@@ -33,7 +33,8 @@ Which studio fills which slot:
 |---|---|---|
 | bed / atmosphere | DRIFT | TAPE-stretched anything; CIRCUIT pad; PRISM `harmonic` of a loop |
 | beat / groove | PULSE | LOOM (layered loops); CHOP (sliced break); PRISM `percussive` |
-| melody / hook / bass | CIRCUIT | PULSE melodic lanes (`bass`/`pluck`/`keys`) |
+| melody / hook / bass | CIRCUIT | PULSE melodic lanes (`bass`/`pluck`/`keys`); LICK for a played line (bends, slides, hammer-ons) |
+| guitar / strummed harmony | LICK | campfire strums, riffs, palm-muted chug, fingerstyle answers — a *source*, renders like PULSE/CIRCUIT with no refs |
 | voice | VOX | the imported corpus (`tag:narration`, `killer-0N/*`, `deck12/s*`, `launch/s*`) |
 | character / grit | TAPE | — (TAPE is a *pass over* a stem, never a source) |
 | voice character | STOMP | robot / vocoder / pitched / pedalled voice — also a *pass over* a stem, never a source. TAPE ages the tape, STOMP changes the speaker. |
@@ -48,7 +49,7 @@ asset, because `sound-render.mjs` resolves clip refs against `Substrate.listAsse
 **exits 2 with the unresolved list** if a ref matches nothing.
 
 ```
-1. pure-synthesis stems   PULSE · CIRCUIT · DRIFT        (no refs — render any time, any order)
+1. pure-synthesis stems   PULSE · CIRCUIT · DRIFT · LICK (no refs — render any time, any order)
 2. voice takes            VOX lines via the bridge TTS   (or reuse imported corpus assets)
 3. derived stems          TAPE / PRISM / CHOP / LOOM     (need their source asset from 1 or 2)
 4. assembly-level stems   VOX timeline stem              (needs its line takes)
