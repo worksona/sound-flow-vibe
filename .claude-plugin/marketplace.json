@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Skills & tools for Sound Flow — ten browser audio studios sharing one library, one config codec and one substrate.",
-    "version": "1.14.0"
+    "version": "1.17.0"
   },
   "plugins": [
     {
       "name": "sound-flow-vibe",
       "source": "./sound-flow-vibe",
       "description": "Vibe Sound Flow with words: pick the studio, author a seeded config against its schema, and deliver a #sfa= link that opens the studio with the sound already loaded — beats, synth patches, ambient beds, slicing, loops, narration, analysis, tape character, vocoded and pedalled voices, and full mixes.",
-      "version": "1.14.0",
+      "version": "1.17.0",
       "category": "creative"
     }
   ]

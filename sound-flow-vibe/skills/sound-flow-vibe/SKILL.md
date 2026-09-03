@@ -52,7 +52,7 @@ bed and my narration over it") is the **composition flow** — read
 [`reference/composing.md`](reference/composing.md) and drive the chain from there.
 
 Engines today: pulse 1.4.0 · circuit 1.1.0 · drift 1.1.0 · chop 1.0.0 · loom 1.1.0 · vox 1.0.0 ·
-prism 1.1.0 · tape 1.2.0 · mix 1.2.1 · stomp 1.0.0 · lick 1.1.0.
+prism 1.1.0 · tape 1.2.0 · mix 1.2.1 · stomp 1.0.0 · lick 1.2.0.
 
 **TAPE vs STOMP** — the two fx studios are split by what they can be fed, not by taste. TAPE's
 `rate`/`stretch`/`vinyl` are *source-stage*: they need a whole buffer, so TAPE ages a finished
